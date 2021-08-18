@@ -73,8 +73,65 @@ OurAPP.get("/book/a/:author", (req, res) => {
 // Params   - none
 // Body     - none
 OurAPP.post("/book/new", (req, res) => {
-  console.log(req.body);
-  return res.json({message: 'Book added successfully'});
+  const { newBook } = (req.body);
+
+  // add new data
+  Database.Book.push(newBook);
+
+  return res.json(Database.Book);
+});
+
+// Route    - /book/update
+// Des      - to update book details
+// Access   - Public
+// Method   - PUT
+// Params   - bookID (ISBN)
+// Body     - none
+OurAPP.put("/book/update/:bookID", (req, res) => {
+  const {updatedBook} = req.body;
+
+  const {bookID} = req.params;
+
+  const book = Database.Book.map((book) => {
+    if(book.ISBN === bookID) {
+      return { ...book, ...updatedBook}
+    }
+    return book;
+  });
+
+  return res.json(book);
+});
+
+// Route    - /book/update
+// Des      - to update/add new author
+// Access   - Public
+// Method   - PUT
+// Params   - bookID (ISBN)
+// Body     - none
+OurAPP.put("/bookAuthor/update/:bookID", (req, res) => {
+  const {newAuthor} = req.body;
+  const {bookID} = req.params;
+
+  const book = Database.Book.map((book) => {
+    if(book.ISBN = bookID){
+      if(!book.authors.includes(newAuthor)) {
+        return book.authors.push(newAuthor)
+      }
+      return book;
+    }
+    return book;
+  });
+
+  const author = Database.Author.map((author) => {
+    if(author.id === newAuthor){
+      if(!author.books.includes(bookID)){
+        return author.books.push(bookID);
+      }
+      return author;
+    }
+    return author;
+  })
+  return res.json({book: book, author: author });
 });
 
 
@@ -112,9 +169,30 @@ OurAPP.get("/author/:authorID", (req, res) => {
 OurAPP.post("/author/new", (req, res) => {
   const { newAuthor } = req.body;
 
-  console.log(newAuthor);
+  Database.Author.push(newAuthor);
   
-  return res.json({message: 'Author added successfully'});
+  return res.json(Database.Author);
+});
+
+// Route    - /author/update
+// Des      - to update author details
+// Access   - Public
+// Method   - PUT
+// Params   - authorID (id)
+// Body     - none
+OurAPP.put("/author/update/:authorID", (req, res) => {
+  const {updatedAuthor} = req.body;
+
+  const {authorID} = req.params;
+
+  const author = Database.Author.map((author) => {
+    if(author.id === parseInt(authorID)) {
+      return { ...author, ...updatedAuthor}
+    }
+    return author;
+  });
+
+  return res.json(author);
 });
 
 
@@ -164,11 +242,11 @@ OurAPP.get("/publication/b/:bookID", (req, res) => {
 // Params   - none
 // Body     - none
 OurAPP.post("/publication/new", (req, res) => {
-  const newPublication = req.body;
+  const { newPublication } = req.body;
 
-  console.log(newPublication);
+  Database.Publication.push(newPublication);
   
-  return res.json({message: 'Publication added successfully'});
+  return res.json(Database.Publication);
 });
 
 
