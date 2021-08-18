@@ -6,6 +6,8 @@ const Database = require("./database");
 // initialization
 const OurAPP = express();
 
+OurAPP.use(express.json());
+
 OurAPP.get("/", (request, response) => {
   response.json({ message: "Server is working!!!!!!" });
 });
@@ -64,6 +66,17 @@ OurAPP.get("/book/a/:author", (req, res) => {
   return res.json({ book: getBook });
 });
 
+// Route    - /book/new
+// Des      - to add new book
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - none
+OurAPP.post("/book/new", (req, res) => {
+  console.log(req.body);
+  return res.json({message: 'Book added successfully'});
+});
+
 
 
 // Route    - /author
@@ -88,6 +101,20 @@ OurAPP.get("/author/:authorID", (req, res) => {
   );
 
   return res.json({ book: getAuthor });
+});
+
+// Route    - /author/new
+// Des      - to add new author
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - none
+OurAPP.post("/author/new", (req, res) => {
+  const { newAuthor } = req.body;
+
+  console.log(newAuthor);
+  
+  return res.json({message: 'Author added successfully'});
 });
 
 
@@ -129,6 +156,21 @@ OurAPP.get("/publication/b/:bookID", (req, res) => {
 
   return res.json({ book: getPublication });
 });
+
+// Route    - /publication/new
+// Des      - to add new publication
+// Access   - Public
+// Method   - POST
+// Params   - none
+// Body     - none
+OurAPP.post("/publication/new", (req, res) => {
+  const newPublication = req.body;
+
+  console.log(newPublication);
+  
+  return res.json({message: 'Publication added successfully'});
+});
+
 
 
 OurAPP.listen(4000, () => console.log("Server is running"));
