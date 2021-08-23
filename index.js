@@ -261,7 +261,21 @@ OurAPP.put("/author/updateName/:authorID", (req, res) => {
   return res.json(Database.Author);
 });
 
+// Route    - /author/delete/:authorID
+// Des      - to delete an author
+// Access   - Public
+// Method   - DELETE
+// Params   - authorID
+// Body     - none
+OurAPP.delete("/author/delete/:authorID", (req, res) => {
+  const {authorID} = req.params;
 
+  const filteredAuthors = Database.Author.filter((author) => author.id !== parseInt(authorID));
+  
+  Database.Author = filteredAuthors;
+
+  return res.json(Database.Author);
+})
 
 
 
@@ -275,15 +289,15 @@ OurAPP.get("/publication", (req, res) => {
   return res.json({ publication: Database.Publication });
 });
 
-// Route    - /publication/:publicationID
+// Route    - /publication/:pubID
 // Des      - To get a specific publication
 // Access   - Public
 // Method   - GET
-// Params   - publicationID
+// Params   - pubID
 // Body     - none
-OurAPP.get("/publication/:publicationID", (req, res) => {
+OurAPP.get("/publication/:pubID", (req, res) => {
   const getPublication = Database.Publication.filter(
-    (publication) => publication.id === parseInt(req.params.publicationID)
+    (publication) => publication.id === parseInt(req.params.pubID)
   );
 
   return res.json({ book: getPublication });
@@ -321,15 +335,15 @@ OurAPP.post("/publication/new", (req, res) => {
 // Des      - to update publication details
 // Access   - Public
 // Method   - PUT
-// Params   - publicationID (id)
+// Params   - pubID (id)
 // Body     - none
-OurAPP.put("/publication/update/:publicationID", (req, res) => {
+OurAPP.put("/publication/update/:pubID", (req, res) => {
   const {updatedPublication} = req.body;
 
-  const {publicationID} = req.params;
+  const {pubID} = req.params;
 
   const publication = Database.Publication.map((publication) => {
-    if(publication.id === parseInt(publicationID)) {
+    if(publication.id === parseInt(pubID)) {
       return { ...publication, ...updatedPublication}
     }
     return publication;
@@ -338,6 +352,52 @@ OurAPP.put("/publication/update/:publicationID", (req, res) => {
   return res.json(publication);
 });
 
+// Route    - /publication/delete/:pubID
+// Des      - to delete an publication
+// Access   - Public
+// Method   - DELETE
+// Params   - pubID
+// Body     - none
+OurAPP.delete("/publication/delete/:pubID", (req, res) => {
+  const {pubID} = req.params;
+
+  const filteredPublication = Database.Publication.filter((pub) => pub.id !== parseInt(pubID));
+
+  Database.Publication = filteredPublication;
+
+  return res.json(Database.Publication);
+});
+
+// Route    - /publication/delete/book
+// Des      - to delete a book from publication
+// Access   - Public
+// Method   - DELETE
+// Params   - bookID (ISBN), pubID
+// Body     - none
+OurAPP.delete("/publication/delete/book/:bookID/:pubID", (req, res) => {
+  const {bookID, pubID} = req.params;
+
+  Database.Book.forEach((book) => {
+    if(book.ISBN === bookID){
+      book.publication = 0;
+      return book;
+    }
+    return book;
+  });
+
+  Database.Publication.forEach((pub) => {
+    if(pub.id === parseInt(pubID)){
+      const filteredBooks = pub.books.filter(
+        (book) => book !== bookID
+      );
+      pub.books = filteredBooks;
+      return pub;
+    }
+    return pub;
+  });
+
+  return res.json({book: Database.Book, publication :Database.Publication})
+});
 
 
 OurAPP.listen(4000, () => console.log("Server is running"));
