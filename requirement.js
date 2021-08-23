@@ -51,7 +51,7 @@ Publication
  - POST
     - Add new publication✅
  - PUT
-    - update publication 
+    - update publication✅ 
     - to update/add new book
  - DELETE
     - delete a book from publication
